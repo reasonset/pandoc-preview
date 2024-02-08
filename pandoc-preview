@@ -1,0 +1,37 @@
+#!/bin/zsh
+
+if [[ -z $1 || ! -f $1 ]]
+then
+  print "No file given." >&2
+  exit 2
+fi
+
+source_file=$1
+
+if [[ -e ${XDG_CONFIG_HOME:-$HOME/.config}/reasonset/pandoc-preview.rc ]]
+then
+  source ${XDG_CONFIG_HOME:-$HOME/.config}/reasonset/pandoc-preview.rc
+elif [[ -e ${XDG_CONFIG_HOME:-$HOME/.config}/reasonset/pandoc-preview/pandoc-preview.rc ]]
+then
+  source ${XDG_CONFIG_HOME:-$HOME/.config}/reasonset/pandoc-preview/pandoc-preview.rc
+fi
+
+typeset -a pandoc_cmdline=(${pandoc_cmd:-pandoc} -t html5 -s --embed-resources)
+
+if [[ -n $css ]]
+then
+  pandoc_cmdline+=(-c "$css")
+fi
+
+typeset tmpfile=$(mktemp)
+
+"${pandoc_cmdline[@]}" "$source_file" >> $tmpfile
+
+if [[ -n $webview_cmd ]]
+then
+  "${webview_cmd}" $tmpfile
+else
+  stdbuf -oL -eL yad --width=${yad_width:-800} --height=${yad_height:-500} --html < $tmpfile
+fi
+
+[[ -f $tmpfile ]] && rm $tmpfile

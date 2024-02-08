@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Pandoc Preview
+GenericName=Pandoc Preview
+Comment=Preview Markdown file with Pandoc and Webview.
+Exec=pandoc-preview %U
+Terminal=false
+Icon=text-x-markdown
+Type=Application
+Categories=TextEditor;Utility;Viewer;
+MimeType=text/plain;application/x-desktop;text/x-markdown
